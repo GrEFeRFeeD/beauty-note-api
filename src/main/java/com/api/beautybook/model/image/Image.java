@@ -26,7 +26,7 @@ public class Image {
   private Long id;
 
   @Column(columnDefinition = "BLOB")
-  private Byte[] content;
+  private byte[] content;
 
   @Override
   public boolean equals(Object o) {

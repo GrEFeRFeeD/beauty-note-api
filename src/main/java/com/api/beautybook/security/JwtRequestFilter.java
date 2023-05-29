@@ -40,6 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     String email = null;
     String jwtToken = null;
     String name = null;
+    String lastName = null;
     // JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
     if (requestTokenHeader != null) {
       if (!requestTokenHeader.startsWith("Bearer ")) {
@@ -50,6 +51,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
       try {
         email = jwtUtil.getEmailFromToken(jwtToken);
         name = jwtUtil.getNameFromToken(jwtToken);
+        lastName = jwtUtil.getLastNameFromToken(jwtToken);
       } catch (IllegalArgumentException e) {
         System.out.println("Unable to get JWT Token");
       } catch (UnsupportedJwtException e) {
@@ -67,7 +69,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
       JwtUserDetails userDetails = (JwtUserDetails)
-          this.jwtUserDetailsService.loadUserByEmailAndName(email, name);
+          this.jwtUserDetailsService.loadUserByEmailNameImage(email, name, lastName, null);
 
       // If token is valid configure Spring Security to manually set authentication.
       if (jwtUtil.validateToken(jwtToken, userDetails)) {

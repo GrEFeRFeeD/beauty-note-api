@@ -20,7 +20,7 @@ public class FacebookUtil {
   private static final String markerUri = "https://graph.facebook.com/oauth/access_token?"
       + "client_id=%s&client_secret=%s&grant_type=client_credentials";
   private static final String checkMarkerUri = "https://graph.facebook.com/debug_token?input_token=%s&access_token=%s";
-  private static final String userUri = "https://graph.facebook.com/%s?fields=name,email&access_token=%s";
+  private static final String userUri = "https://graph.facebook.com/%s?fields=first_name,last_name,email,picture&access_token=%s";
 
   public static final String userFacebookTokenUrlV15 = "https://www.facebook.com/v15.0/dialog/oauth?client_id=%s&redirect_uri=%s&response_type=token";
 
@@ -80,6 +80,24 @@ public class FacebookUtil {
     private TokenData data;
   }
 
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Getter
+  @Setter
+  static class FbPictureData {
+    private Integer height;
+    private String url;
+    private Integer width;
+  }
+
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Getter
+  @Setter
+  static class FbPicture {
+    private FbPictureData data;
+  }
+
   /**
    * DTO object for Facebook User Information.
    */
@@ -90,7 +108,9 @@ public class FacebookUtil {
   static class FbUserInfo {
 
     private String email;
-    private String name;
+    private String last_name;
+    private String first_name;
+    private FbPicture picture;
 
     @JsonAlias("user_id")
     private String userId;
@@ -147,7 +167,9 @@ public class FacebookUtil {
     Map<FacebookScopes, String> scopes = new HashMap<>();
     if (fbUserInfo != null) {
       scopes.put(FacebookScopes.EMAIL, fbUserInfo.getEmail());
-      scopes.put(FacebookScopes.NAME, fbUserInfo.getName());
+      scopes.put(FacebookScopes.FIRST_NAME, fbUserInfo.getFirst_name());
+      scopes.put(FacebookScopes.LAST_NAME, fbUserInfo.getLast_name());
+      scopes.put(FacebookScopes.PROFILE_PICTURE_URL, fbUserInfo.getPicture().getData().getUrl());
     }
 
     return scopes;
@@ -157,6 +179,6 @@ public class FacebookUtil {
    * Enum for application facebook scopes.
    */
   public enum FacebookScopes {
-    EMAIL, NAME
+    EMAIL, FIRST_NAME, LAST_NAME, PROFILE_PICTURE_URL
   }
 }

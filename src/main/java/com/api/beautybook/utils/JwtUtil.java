@@ -54,6 +54,10 @@ public class JwtUtil implements Serializable {
     return getClaimFromToken(token, (claims -> claims.get("name", String.class)));
   }
 
+  public String getLastNameFromToken(String token) {
+    return getClaimFromToken(token, (claims -> claims.get("lastName", String.class)));
+  }
+
   /**
    * Extracts certain claim from token by given function.
    *
@@ -94,6 +98,7 @@ public class JwtUtil implements Serializable {
     Map<String, Object> claims = new HashMap<>();
     claims.put("authorities", jwtUserDetails.getAuthorities());
     claims.put("name", jwtUserDetails.getName());
+    claims.put("lastName", jwtUserDetails.getLastName());
 
     return Jwts.builder()
         .setClaims(claims)
