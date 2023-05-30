@@ -1,6 +1,9 @@
 package com.api.beautybook.controllers.dto.responses;
 
+import com.api.beautybook.model.master.Master;
+import com.api.beautybook.model.master_type.MasterType;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +22,23 @@ public class MasterProfileDto {
   private String address;
   private String name;
   private String surname;
-  private Byte[] image;
-  private List<MasterTypeDto> types;
-  private String mobilePhone;
+  private byte[] image;
+  private Set<MasterType> types;
+  private String phoneNumber;
   private String email;
+
+  public MasterProfileDto(Master master) {
+    this.id = master.getId();
+    this.country = master.getUser().getCountry();
+    this.region = master.getUser().getRegion();
+    this.city = master.getUser().getRegion();
+    this.city = master.getUser().getCity();
+    this.address = master.getAddress();
+    this.name = master.getUser().getName();
+    this.surname = master.getUser().getSurname();
+    this.image = master.getUser().getImage().getContent();
+    this.types = master.getMasterTypes();
+    this.phoneNumber = master.getUser().getPhoneNumber();
+    this.email = master.getUser().getEmail();
+  }
 }

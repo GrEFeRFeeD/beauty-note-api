@@ -11,6 +11,7 @@ public class JwtUserDetails implements UserDetails {
 
   private String email;
   private String name;
+  private String lastName;
   private String password;
   private Collection<? extends GrantedAuthority> authorities;
   private Boolean enabled;
@@ -38,6 +39,14 @@ public class JwtUserDetails implements UserDetails {
     this.accountNonExpired = accountNonExpired;
     this.accountNonLocked = accountNonLocked;
     this.credentialsNonExpired = credentialsNonExpired;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   public String getEmail() {

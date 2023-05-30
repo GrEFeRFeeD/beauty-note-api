@@ -1,5 +1,7 @@
 package com.api.beautybook.security;
 
+import com.api.beautybook.model.image.Image;
+import com.api.beautybook.model.user.Role;
 import com.api.beautybook.model.user.User;
 import com.api.beautybook.model.user.UserRepository;
 import java.util.HashSet;
@@ -29,6 +31,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     return new BCryptPasswordEncoder();
   }
 
+
   /**
    * Wrapper method of loadUserByUsername for loading user by email and name.
    *
@@ -36,10 +39,25 @@ public class JwtUserDetailsService implements UserDetailsService {
    * @param name name of certain user
    * @return standard loaded UserDetails object
    */
-  public UserDetails loadUserByEmailAndName(String email, String name) {
+  public UserDetails loadUserByEmailNameImage(String email, String name, String lastName, Image image) {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) loadUserByUsername(email);
     jwtUserDetails.setName(name);
+    jwtUserDetails.setLastName(lastName);
+
+    User user = userRepository.findByEmail(email);
+    if (user.getName() == null) {
+      user.setName(name);
+      user = userRepository.save(user);
+    }
+    if (user.getSurname() == null) {
+      user.setSurname(lastName);
+      user = userRepository.save(user);
+    }
+    if (user.getImage() == null) {
+      user.setImage(image);
+      user = userRepository.save(user);
+    }
 
     return jwtUserDetails;
   }
@@ -52,9 +70,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     Set<GrantedAuthority> authorities = new HashSet<>();
 
     if (user == null) {
-      // TODO: image obtaining
-      // TODO: new user adding
-      user = new User();
+      user  = new User(null, null, email, null, null, null, null, null, null, null, Role.IN_DECIDE);
       user = userRepository.save(user);
     }
 

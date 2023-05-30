@@ -1,5 +1,6 @@
 package com.api.beautybook.controllers.dto.responses;
 
+import com.api.beautybook.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,18 @@ public class ClientProfileDto {
   private String region;
   private String city;
   private String role;
+  private byte[] image;
+
+  public ClientProfileDto(User user) {
+    this(user.getId(),
+        user.getEmail(),
+        user.getName(),
+        user.getSurname(),
+        user.getPhoneNumber(),
+        user.getCountry(),
+        user.getRegion(),
+        user.getCity(),
+        user.getRole().toString(),
+        user.getImage().getContent());
+  }
 }

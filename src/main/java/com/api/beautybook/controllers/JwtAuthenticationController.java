@@ -4,11 +4,17 @@ import com.api.beautybook.controllers.dto.requests.JwtDto;
 import com.api.beautybook.controllers.dto.responses.FbInfoDto;
 import com.api.beautybook.exceptions.SecurityException;
 import com.api.beautybook.exceptions.SecurityException.SecurityExceptionProfile;
+import com.api.beautybook.model.image.Image;
+import com.api.beautybook.model.image.ImageService;
 import com.api.beautybook.security.JwtUserDetails;
 import com.api.beautybook.security.JwtUserDetailsService;
 import com.api.beautybook.utils.FacebookUtil;
 import com.api.beautybook.utils.FacebookUtil.FacebookScopes;
 import com.api.beautybook.utils.JwtUtil;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,15 +41,17 @@ public class JwtAuthenticationController {
   private final JwtUtil jwtUtil;
   private final JwtUserDetailsService userDetailsService;
   private final FacebookUtil facebookUtil;
+  private ImageService imageService;
 
   @Autowired
-  public JwtAuthenticationController(AuthenticationManager authenticationManager,
-      JwtUtil jwtUtil, JwtUserDetailsService userDetailsService,
-      FacebookUtil facebookUtil) {
+  public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
+      JwtUserDetailsService userDetailsService, FacebookUtil facebookUtil,
+      ImageService imageService) {
     this.authenticationManager = authenticationManager;
     this.jwtUtil = jwtUtil;
     this.userDetailsService = userDetailsService;
     this.facebookUtil = facebookUtil;
+    this.imageService = imageService;
   }
 
   @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
@@ -59,12 +67,19 @@ public class JwtAuthenticationController {
     }
 
     String email = userScopes.get(FacebookScopes.EMAIL);
-    String name = userScopes.get(FacebookScopes.NAME);
+    String firstName = userScopes.get(FacebookScopes.FIRST_NAME);
+    String lastName = userScopes.get(FacebookScopes.LAST_NAME);
+    String pictureUrl = userScopes.get(FacebookScopes.PROFILE_PICTURE_URL);
+
+    byte[] pictureContent = obtainImageContentByUrl(pictureUrl);
+    System.out.println("BYTE CONTENT = " + pictureContent);
+    Image savedImage = imageService.saveImage(pictureContent);
+    System.out.println("IMAGE = " + savedImage);
 
     authenticate(email);
 
     final JwtUserDetails userDetails = (JwtUserDetails) userDetailsService
-        .loadUserByEmailAndName(email, name);
+        .loadUserByEmailNameImage(email, firstName, lastName, savedImage);
 
     com.api.beautybook.controllers.dto.responses.JwtDto jwtResponseDto = new com.api.beautybook.controllers.dto.responses.JwtDto(jwtUtil.generateToken(userDetails));
 
@@ -78,6 +93,30 @@ public class JwtAuthenticationController {
     } catch (BadCredentialsException e) {
       throw new SecurityException(SecurityExceptionProfile.BAD_CREDENTIALS);
     }
+  }
+
+  private byte[] obtainImageContentByUrl(String imageUrl) {
+
+    try {
+
+      URL url = new URL(imageUrl);
+
+      InputStream inputStream = url.openStream();
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      byte[] buffer = new byte[1024];
+      int bytesRead;
+
+      while ((bytesRead = inputStream.read(buffer)) != -1) {
+        outputStream.write(buffer, 0, bytesRead);
+      }
+
+      return outputStream.toByteArray();
+
+    } catch (IOException e) {
+
+    }
+
+    return new byte[10];
   }
 
   @GetMapping("/oauth2/facebook/v15.0")

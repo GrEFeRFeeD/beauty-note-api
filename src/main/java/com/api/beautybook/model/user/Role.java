@@ -1,5 +1,9 @@
 package com.api.beautybook.model.user;
 
 public enum Role {
-  MASTER, CLIENT
+  IN_DECIDE,
+  PRE_MASTER,
+  MASTER,
+  PRE_CLIENT,
+  CLIENT,
 }
