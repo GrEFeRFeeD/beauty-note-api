@@ -5,7 +5,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 FROM openjdk:11
-COPY --from=build /target/beautybook-0.0.1-SNAPSHOT.jar beautybook.jar
+COPY --from=build /target/beautynote-1.jar beautynote.jar
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "beautybook.jar"]
+ENTRYPOINT ["java", "-jar", "beautynote.jar"]

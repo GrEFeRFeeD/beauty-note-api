@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.api</groupId>
-	<artifactId>beautybook</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>beautybook</name>
-	<description>Beauty Book API</description>
+	<artifactId>beautynote</artifactId>
+	<version>1</version>
+	<name>beautynote</name>
+	<description>Beauty Note API</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
