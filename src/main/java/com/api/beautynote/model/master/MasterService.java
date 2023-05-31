@@ -27,4 +27,8 @@ public class MasterService {
   public Optional<Master> findById(Long id) {
     return masterRepository.findById(id);
   }
+
+  public Optional<Master> findOptionallyById(Long id) {
+    return masterRepository.findById(id);
+  }
 }

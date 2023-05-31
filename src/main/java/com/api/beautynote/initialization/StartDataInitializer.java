@@ -11,10 +11,16 @@ import com.api.beautynote.model.master_type.MasterType;
 import com.api.beautynote.model.master_type.MasterTypeRepository;
 import com.api.beautynote.model.service.Service;
 import com.api.beautynote.model.service.ServiceRepository;
+import com.api.beautynote.model.slot.Slot;
+import com.api.beautynote.model.slot.SlotRepository;
+import com.api.beautynote.model.slot.SlotStatus;
 import com.api.beautynote.model.user.Role;
 import com.api.beautynote.model.user.User;
 import com.api.beautynote.model.user.UserRepository;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
+import java.util.Date;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -31,18 +37,20 @@ public class StartDataInitializer implements ApplicationRunner {
   private final UserRepository userRepository;
   private final MasterRepository masterRepository;
   private final MasterServiceRepository masterServiceRepository;
+  private final SlotRepository slotRepository;
 
   @Autowired
   public StartDataInitializer(MasterTypeRepository masterTypeRepository,
       ServiceRepository serviceRepository, ImageRepository imageRepository,
       UserRepository userRepository, MasterRepository masterRepository,
-      MasterServiceRepository masterServiceRepository) {
+      MasterServiceRepository masterServiceRepository, SlotRepository slotRepository) {
     this.masterTypeRepository = masterTypeRepository;
     this.serviceRepository = serviceRepository;
     this.imageRepository = imageRepository;
     this.userRepository = userRepository;
     this.masterRepository = masterRepository;
     this.masterServiceRepository = masterServiceRepository;
+    this.slotRepository = slotRepository;
   }
 
   @Override
@@ -93,8 +101,33 @@ public class StartDataInitializer implements ApplicationRunner {
 
     m2 = masterRepository.save(m2);
 
-    com.api.beautynote.model.master_service.MasterService ms1 = new MasterService(new MasterServiceKey(), m2, s1, 100D, 30);
+    com.api.beautynote.model.master_service.MasterService ms1 = new MasterService(new MasterServiceKey(), m2, s1, 100D, 30, "Пострижу так, що не будете робити зачіску ще рік.");
     ms1 = masterServiceRepository.save(ms1);
+
+    Slot sl1 = new Slot(null, ms1, m2, null,
+        Date.from(LocalDateTime.of(2023, 6, 5, 9, 30).atZone(ZoneId.systemDefault()).toInstant()),
+        Date.from(LocalDateTime.of(2023, 6, 5, 10, 30).atZone(ZoneId.systemDefault()).toInstant()),
+        SlotStatus.AVAILABLE);
+
+    Slot sl2 = new Slot(null, ms1, m2, null,
+        Date.from(LocalDateTime.of(2023, 6, 5, 10, 30).atZone(ZoneId.systemDefault()).toInstant()),
+        Date.from(LocalDateTime.of(2023, 6, 5, 11, 30).atZone(ZoneId.systemDefault()).toInstant()),
+        SlotStatus.AVAILABLE);
+
+    Slot sl3 = new Slot(null, ms1, m2, null,
+        Date.from(LocalDateTime.of(2023, 6, 6, 10, 0).atZone(ZoneId.systemDefault()).toInstant()),
+        Date.from(LocalDateTime.of(2023, 6, 6, 12, 0).atZone(ZoneId.systemDefault()).toInstant()),
+        SlotStatus.AVAILABLE);
+
+    Slot sl4 = new Slot(null, ms1, m2, null,
+        Date.from(LocalDateTime.of(2023, 6, 8, 15, 30).atZone(ZoneId.systemDefault()).toInstant()),
+        Date.from(LocalDateTime.of(2023, 6, 8, 16, 45).atZone(ZoneId.systemDefault()).toInstant()),
+        SlotStatus.AVAILABLE);
+
+    sl1 = slotRepository.save(sl1);
+    sl2 = slotRepository.save(sl2);
+    sl3 = slotRepository.save(sl3);
+    sl4 = slotRepository.save(sl4);
 
     System.out.println("Basic master types initialization...");
     System.out.println(mt1);
@@ -111,6 +144,12 @@ public class StartDataInitializer implements ApplicationRunner {
 
     System.out.println("Master services test data initialization...");
     System.out.println(ms1);
+
+    System.out.println("Slots test data initialization...");
+    System.out.println(sl1);
+    System.out.println(sl2);
+    System.out.println(sl3);
+    System.out.println(sl4);
 
     System.out.println("Initialization is complete.");
   }

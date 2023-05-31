@@ -41,4 +41,6 @@ public class MasterService {
 
   @Column(name = "average_time")
   private Integer averageTime;
+
+  private String description;
 }

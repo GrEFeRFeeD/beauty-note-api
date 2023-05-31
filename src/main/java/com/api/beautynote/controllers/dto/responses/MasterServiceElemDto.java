@@ -18,6 +18,7 @@ public class MasterServiceElemDto {
   private Double price;
   private Integer averageTime;
   private Double rating;
+  private String description;
 
 
   public MasterServiceElemDto(MasterService masterService) {
@@ -25,6 +26,7 @@ public class MasterServiceElemDto {
     this.serviceId = masterService.getService().getId();
     this.price = masterService.getPrice();
     this.averageTime = masterService.getAverageTime();
+    this.description = masterService.getDescription();
     //TODO: master service rating calculation
     this.rating = (double) (3 + new Random().nextInt(3));
   }

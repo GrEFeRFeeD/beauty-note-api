@@ -3,6 +3,7 @@ package com.api.beautynote.controllers;
 import com.api.beautynote.controllers.dto.responses.MasterArrayDto;
 import com.api.beautynote.controllers.dto.responses.MasterServiceArrayDto;
 import com.api.beautynote.controllers.dto.responses.PublicMasterProfileDto;
+import com.api.beautynote.controllers.dto.responses.PublicSlotsMapDto;
 import com.api.beautynote.exceptions.MasterException;
 import com.api.beautynote.exceptions.MasterException.MasterExceptionProfile;
 import com.api.beautynote.model.master.Master;
@@ -12,14 +13,21 @@ import com.api.beautynote.model.master_type.MasterType;
 import com.api.beautynote.model.master_type.MasterTypeService;
 import com.api.beautynote.model.service.Service;
 import com.api.beautynote.model.service.ServiceService;
+import com.api.beautynote.model.slot.Slot;
+import com.api.beautynote.model.slot.SlotService;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,14 +41,17 @@ public class MasterController {
   private final MasterTypeService masterTypeService;
   private final ServiceService serviceService;
   private final MasterServiceService masterServiceService;
+  private final SlotService slotService;
 
   @Autowired
   public MasterController(MasterService masterService, MasterTypeService masterTypeService,
-      ServiceService serviceService, MasterServiceService masterServiceService) {
+      ServiceService serviceService, MasterServiceService masterServiceService,
+      SlotService slotService) {
     this.masterService = masterService;
     this.masterTypeService = masterTypeService;
     this.serviceService = serviceService;
     this.masterServiceService = masterServiceService;
+    this.slotService = slotService;
   }
 
   @GetMapping("/masters")
@@ -73,17 +84,18 @@ public class MasterController {
         .filter(x -> (Objects.isNull(city) || x.getUser().getCity().equals(city)))
         .filter(x -> (masterTypes.isEmpty() || containsAtLeastOne(masterTypes, x.getMasterTypes())))
         .filter(x -> (serviceList.isEmpty() || containsAtLeastOne(serviceList,
-              masterServiceService.findByMaster(x).stream()
-                  .map(com.api.beautynote.model.master_service.MasterService::getService)
-                  .collect(Collectors.toList())
-            )))
+            masterServiceService.findByMaster(x).stream()
+                .map(com.api.beautynote.model.master_service.MasterService::getService)
+                .collect(Collectors.toList())
+        )))
         .collect(Collectors.toList());
 
     return new MasterArrayDto(masters);
   }
 
-  private static <T> boolean containsAtLeastOne(Collection<T> neededElements, Collection<T> actualElements) {
-    for (T item: neededElements) {
+  private static <T> boolean containsAtLeastOne(Collection<T> neededElements,
+      Collection<T> actualElements) {
+    for (T item : neededElements) {
       if (actualElements.contains(item)) {
         return true;
       }
@@ -115,11 +127,14 @@ public class MasterController {
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
 
-    List<com.api.beautynote.model.master_service.MasterService> masterServices = masterServiceService.findAll().stream()
-        .filter(x -> (Objects.isNull(country) || x.getMaster().getUser().getCountry().equals(country)))
+    List<com.api.beautynote.model.master_service.MasterService> masterServices = masterServiceService.findAll()
+        .stream()
+        .filter(
+            x -> (Objects.isNull(country) || x.getMaster().getUser().getCountry().equals(country)))
         .filter(x -> (Objects.isNull(region) || x.getMaster().getUser().getRegion().equals(region)))
         .filter(x -> (Objects.isNull(city) || x.getMaster().getUser().getCity().equals(city)))
-        .filter(x -> (masterTypes.isEmpty() || containsAtLeastOne(masterTypes, x.getMaster().getMasterTypes())))
+        .filter(x -> (masterTypes.isEmpty() || containsAtLeastOne(masterTypes,
+            x.getMaster().getMasterTypes())))
         .filter(x -> (serviceList.isEmpty() || serviceList.contains(x.getService())))
         .collect(Collectors.toList());
 
@@ -145,15 +160,50 @@ public class MasterController {
     Master master = masterService.findById(masterId)
         .orElseThrow(() -> new MasterException(MasterExceptionProfile.MASTER_NOT_FOUND));
 
-    List<com.api.beautynote.model.master_service.MasterService> masterServices = masterServiceService.findByMaster(master);
+    List<com.api.beautynote.model.master_service.MasterService> masterServices = masterServiceService.findByMaster(
+        master);
 
     return new MasterServiceArrayDto(masterServices);
+  }
+
+  @GetMapping("/masters/slots")
+  public PublicSlotsMapDto getSlotsForRange(
+      @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) ZonedDateTime startDateTime,
+      @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) ZonedDateTime endDateTime,
+      @RequestParam(required = false) List<Long> services,
+      @RequestParam(required = false) List<Long> masters
+  ) {
+
+    services = (Objects.isNull(services)) ? new ArrayList<>() : services;
+    masters = (Objects.isNull(masters)) ? new ArrayList<>() : masters;
+
+    List<Service> serviceList = services.stream()
+        .map(serviceService::findOptionallyById)
+        .map(x -> x.orElse(null))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+    List<Master> masterList = masters.stream()
+        .map(masterService::findOptionallyById)
+        .map(x -> x.orElse(null))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+    List<Slot> slots = slotService.findAll().stream()
+        .filter(x -> (Objects.isNull(startDateTime)) || x.getFrom().toInstant().atZone(ZoneId.systemDefault()).isAfter(startDateTime))
+        .filter(x -> (Objects.isNull(endDateTime)) || x.getTo().toInstant().atZone(ZoneId.systemDefault()).isBefore(endDateTime))
+        .filter(x -> (serviceList.isEmpty() || serviceList.contains(x.getMasterService().getService())))
+        .filter(
+            x -> (masterList.isEmpty() || masterList.contains(x.getMasterService().getMaster())))
+        .collect(Collectors.toList());
+
+    return new PublicSlotsMapDto(slots);
   }
 
   /**
    * 	/masters/{masterId}/services/{serviceId}
    * 	/masters/{masterId}/services/{serviceId}/reviews
-   * 	/masters/slots
+   *
    * 	/masters/slots/{slotId}
    */
 }

@@ -37,7 +37,10 @@ public class ProfileController {
     User user = userService.findByEmail(jwtUserDetails.getEmail());
 
     if (user.getRole() == Role.MASTER) {
-      return ResponseEntity.ok(new MasterProfileDto(user.getMaster()));
+      MasterProfileDto masterProfileDto = new MasterProfileDto(user.getMaster());
+      masterProfileDto.setPhoneNumber(user.getPhoneNumber());
+      masterProfileDto.setEmail(user.getEmail());
+      return ResponseEntity.ok(masterProfileDto);
     }
 
     return ResponseEntity.ok(new ClientProfileDto(user));
