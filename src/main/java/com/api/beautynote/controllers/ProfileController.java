@@ -31,14 +31,16 @@ public class ProfileController {
   }
 
   @GetMapping("/me")
-  public ClientProfileDto getSelfProfile(Authentication authentication) {
+  public ResponseEntity<?> getSelfProfile(Authentication authentication) {
 
-    //TODO: for master to
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     User user = userService.findByEmail(jwtUserDetails.getEmail());
-    ClientProfileDto clientProfileDto = new ClientProfileDto(user);
 
-    return clientProfileDto;
+    if (user.getRole() == Role.MASTER) {
+      return ResponseEntity.ok(new MasterProfileDto(user.getMaster()));
+    }
+
+    return ResponseEntity.ok(new ClientProfileDto(user));
   }
 
   @PreAuthorize("hasRole('IN_DECIDE')")

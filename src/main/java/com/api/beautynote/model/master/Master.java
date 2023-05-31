@@ -46,22 +46,22 @@ public class Master {
   private Set<MasterType> masterTypes = new HashSet<>();
 
   @Column(name = "show_mobile_phone")
-  private Boolean showMobilePhone;
+  private Boolean showMobilePhone = false;
 
   @Column(name = "show_email")
-  private Boolean showEmail;
+  private Boolean showEmail = false;
 
   @Column(name = "singly_booking_declination")
-  private Boolean singlyBookingDeclination;
+  private Boolean singlyBookingDeclination = false;
 
   @Column(name = "singly_booking_declination_policy")
-  private Integer singlyBookingDeclinationPolicy;
+  private Integer singlyBookingDeclinationPolicy = 0;
 
   @Column(name = "slot_overlapping")
-  private Boolean slotOverlapping;
+  private Boolean slotOverlapping = false;
 
   @Column(name = "booking_limit")
-  private Integer bookingLimit;
+  private Integer bookingLimit = 0;
 
   public void addMasterType(MasterType masterType) {
     this.masterTypes.add(masterType);

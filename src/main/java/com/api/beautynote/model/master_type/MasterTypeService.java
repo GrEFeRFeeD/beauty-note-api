@@ -1,6 +1,7 @@
 package com.api.beautynote.model.master_type;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +17,9 @@ public class MasterTypeService {
 
   public List<MasterType> findAll() {
     return masterTypeRepository.findAll();
+  }
+
+  public Optional<MasterType> findOptionallyById(Long id) {
+    return masterTypeRepository.findById(id);
   }
 }
