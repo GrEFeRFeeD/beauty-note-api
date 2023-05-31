@@ -34,6 +34,7 @@ public class ProfileController {
   @GetMapping("/me")
   public ClientProfileDto getSelfProfile(Authentication authentication) {
 
+    //TODO: for master to
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     User user = userService.findByEmail(jwtUserDetails.getEmail());
     ClientProfileDto clientProfileDto = new ClientProfileDto(user);

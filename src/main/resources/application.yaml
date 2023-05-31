@@ -1,0 +1,39 @@
+server:
+  port: "8080"
+
+jwt:
+  secret: ${jwt.secret}
+  validity: 36000000
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            clientId: ${fb.clientId}
+            clientSecret: ${fb.clientSecret}
+            redirectUri: ${fb.redirectUri}
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: "create-drop"
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    #database: postgresql
+
+  h2:
+    console.enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+#    platform: postgres
+#    url: "jdbc:postgresql://postgresql:${POSTGRES_PORT}/${POSTGRES_DB}"
+#    username: ${POSTGRES_USER}
+#    password: ${POSTGRES_PASSWORD}
+#    driver-class-name: org.postgresql.Driver
+#    initialization-mode: always
+#    continue-on-error: true
