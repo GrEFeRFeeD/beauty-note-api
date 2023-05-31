@@ -9,16 +9,16 @@ import org.springframework.http.HttpStatus;
  * and authorization (security) exceptions.
  */
 @Getter
-public class MasterException extends RuntimeException {
+public class ServiceException extends RuntimeException {
 
   /**
    * Enum that describes type of exception.
    */
   @AllArgsConstructor
-  public enum MasterExceptionProfile {
+  public enum ServiceExceptionProfile {
 
-    MASTER_NOT_FOUND("master_not_found",
-        "Master by given id not found.", HttpStatus.NOT_FOUND);
+    SERVICE_NOT_FOUND("service_not_found",
+        "Service by given id not found.", HttpStatus.NOT_FOUND);
 
     private final String exceptionName;
     private final String exceptionMessage;
@@ -26,18 +26,18 @@ public class MasterException extends RuntimeException {
 
   }
 
-  private final MasterExceptionProfile masterExceptionProfile;
+  private final ServiceExceptionProfile serviceExceptionProfile;
 
-  public MasterException(MasterExceptionProfile exceptionProfile) {
+  public ServiceException(ServiceExceptionProfile exceptionProfile) {
     super(exceptionProfile.exceptionMessage);
-    this.masterExceptionProfile = exceptionProfile;
+    this.serviceExceptionProfile = exceptionProfile;
   }
 
   public String getName() {
-    return masterExceptionProfile.exceptionName;
+    return serviceExceptionProfile.exceptionName;
   }
 
   public HttpStatus getResponseStatus() {
-    return masterExceptionProfile.responseStatus;
+    return serviceExceptionProfile.responseStatus;
   }
 }

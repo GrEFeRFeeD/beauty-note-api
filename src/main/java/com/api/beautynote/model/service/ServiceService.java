@@ -22,4 +22,8 @@ public class ServiceService {
   public Optional<com.api.beautynote.model.service.Service> findOptionallyById(Long id) {
     return serviceRepository.findById(id);
   }
+
+  public Optional<com.api.beautynote.model.service.Service> findById(Long id) {
+    return serviceRepository.findById(id);
+  }
 }

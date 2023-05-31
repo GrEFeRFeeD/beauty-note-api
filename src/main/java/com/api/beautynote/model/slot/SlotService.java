@@ -1,6 +1,8 @@
 package com.api.beautynote.model.slot;
 
+import com.api.beautynote.model.user.User;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +18,17 @@ public class SlotService {
 
   public List<Slot> findAll() {
     return slotRepository.findAll();
+  }
+
+  public Optional<Slot> findById(Long id) {
+    return slotRepository.findById(id);
+  }
+
+  public Slot save(Slot slot) {
+    return slotRepository.save(slot);
+  }
+
+  public List<Slot> findByClient(User client) {
+    return slotRepository.findByUser(client);
   }
 }

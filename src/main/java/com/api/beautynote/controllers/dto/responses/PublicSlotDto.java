@@ -4,6 +4,7 @@ import com.api.beautynote.model.slot.Slot;
 import com.api.beautynote.model.slot.SlotStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,8 +31,8 @@ public class PublicSlotDto {
 
   public PublicSlotDto(Slot slot) {
     this.id = slot.getId();
-    this.serviceId = slot.getMasterService().getService().getId();
-    this.masterId = slot.getMasterService().getMaster().getId();
+    this.serviceId = Objects.nonNull(slot.getMasterService()) ? slot.getMasterService().getService().getId() : null;
+    this.masterId = slot.getMaster().getId();
     this.from = slot.getFrom();
     this.to = slot.getTo();
     this.status = slot.getStatus();

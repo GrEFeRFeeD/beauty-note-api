@@ -104,22 +104,22 @@ public class StartDataInitializer implements ApplicationRunner {
     com.api.beautynote.model.master_service.MasterService ms1 = new MasterService(new MasterServiceKey(), m2, s1, 100D, 30, "Пострижу так, що не будете робити зачіску ще рік.");
     ms1 = masterServiceRepository.save(ms1);
 
-    Slot sl1 = new Slot(null, ms1, m2, null,
+    Slot sl1 = new Slot(null, null, m2, null,
         Date.from(LocalDateTime.of(2023, 6, 5, 9, 30).atZone(ZoneId.systemDefault()).toInstant()),
         Date.from(LocalDateTime.of(2023, 6, 5, 10, 30).atZone(ZoneId.systemDefault()).toInstant()),
         SlotStatus.AVAILABLE);
 
-    Slot sl2 = new Slot(null, ms1, m2, null,
+    Slot sl2 = new Slot(null, null, m2, null,
         Date.from(LocalDateTime.of(2023, 6, 5, 10, 30).atZone(ZoneId.systemDefault()).toInstant()),
         Date.from(LocalDateTime.of(2023, 6, 5, 11, 30).atZone(ZoneId.systemDefault()).toInstant()),
         SlotStatus.AVAILABLE);
 
-    Slot sl3 = new Slot(null, ms1, m2, null,
+    Slot sl3 = new Slot(null, null, m2, null,
         Date.from(LocalDateTime.of(2023, 6, 6, 10, 0).atZone(ZoneId.systemDefault()).toInstant()),
         Date.from(LocalDateTime.of(2023, 6, 6, 12, 0).atZone(ZoneId.systemDefault()).toInstant()),
         SlotStatus.AVAILABLE);
 
-    Slot sl4 = new Slot(null, ms1, m2, null,
+    Slot sl4 = new Slot(null, null, m2, null,
         Date.from(LocalDateTime.of(2023, 6, 8, 15, 30).atZone(ZoneId.systemDefault()).toInstant()),
         Date.from(LocalDateTime.of(2023, 6, 8, 16, 45).atZone(ZoneId.systemDefault()).toInstant()),
         SlotStatus.AVAILABLE);
