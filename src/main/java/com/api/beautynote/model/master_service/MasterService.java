@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "master_services")
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class MasterService {
 
   @EmbeddedId
@@ -39,4 +41,6 @@ public class MasterService {
 
   @Column(name = "average_time")
   private Integer averageTime;
+
+  private String description;
 }
