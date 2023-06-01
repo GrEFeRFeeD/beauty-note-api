@@ -28,4 +28,8 @@ public class MasterServiceService {
   public Optional<MasterService> findById(MasterServiceKey id) {
     return masterServiceRepository.findById(id);
   }
+
+  public MasterService save(MasterService masterService) {
+    return masterServiceRepository.save(masterService);
+  }
 }

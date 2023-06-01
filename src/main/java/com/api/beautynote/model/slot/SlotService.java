@@ -1,5 +1,6 @@
 package com.api.beautynote.model.slot;
 
+import com.api.beautynote.model.master.Master;
 import com.api.beautynote.model.user.User;
 import java.util.List;
 import java.util.Optional;
@@ -30,5 +31,9 @@ public class SlotService {
 
   public List<Slot> findByClient(User client) {
     return slotRepository.findByUser(client);
+  }
+
+  public List<Slot> findByMaster(Master master) {
+    return slotRepository.findByMaster(master);
   }
 }
