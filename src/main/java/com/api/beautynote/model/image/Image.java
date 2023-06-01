@@ -8,17 +8,16 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.Objects;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.core.io.ByteArrayResource;
 
 @Entity
 @Table(name = "images")
-@Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Image {
 
   @Id
@@ -28,6 +27,28 @@ public class Image {
 
   @Lob
   private byte[] content;
+
+  public Image(Long id, byte[] content) {
+    this.id = id;
+    setContent(content);
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  @Transactional
+  public byte[] getContent() {
+    return new ByteArrayResource(content).getByteArray();
+  }
+
+  public void setContent(byte[] content) {
+    this.content = content;
+  }
 
   @Override
   public boolean equals(Object o) {

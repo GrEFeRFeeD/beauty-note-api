@@ -5,6 +5,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
  * delegating handling to controller level exception handler.
  */
 @Component
+@Transactional
 public class FilterChainExceptionHandler extends OncePerRequestFilter {
 
 

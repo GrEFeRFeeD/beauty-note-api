@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ import org.springframework.web.client.RestClientException;
  */
 @CrossOrigin
 @RestController
+@Transactional
 public class JwtAuthenticationController {
 
   private final AuthenticationManager authenticationManager;
