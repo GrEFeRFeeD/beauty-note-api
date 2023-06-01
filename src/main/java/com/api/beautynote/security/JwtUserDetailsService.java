@@ -6,6 +6,7 @@ import com.api.beautynote.model.user.User;
 import com.api.beautynote.model.user.UserRepository;
 import java.util.HashSet;
 import java.util.Set;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
  * Custom UserDetailsService that implement work with JWT.
  */
 @Service
+@Transactional
 public class JwtUserDetailsService implements UserDetailsService {
 
   @Autowired
@@ -39,6 +41,7 @@ public class JwtUserDetailsService implements UserDetailsService {
    * @param name name of certain user
    * @return standard loaded UserDetails object
    */
+  @Transactional
   public UserDetails loadUserByEmailNameImage(String email, String name, String lastName, Image image) {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) loadUserByUsername(email);

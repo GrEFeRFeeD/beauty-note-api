@@ -4,11 +4,13 @@ import com.api.beautynote.controllers.dto.responses.MasterTypeListDto;
 import com.api.beautynote.controllers.dto.responses.ServiceListDto;
 import com.api.beautynote.model.master_type.MasterTypeService;
 import com.api.beautynote.model.service.ServiceService;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Transactional
 public class DefaultController {
 
   private final ServiceService serviceService;
