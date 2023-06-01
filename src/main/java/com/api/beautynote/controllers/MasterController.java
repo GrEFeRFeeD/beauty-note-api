@@ -41,6 +41,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -231,8 +234,9 @@ public class MasterController {
     return new PublicSlotDto(slot);
   }
 
+  @PreAuthorize("hasRole('CLIENT')")
   @PatchMapping("/masters/slots/{slotId}")
-  public PublicSlotDto sendBookingRequest(
+  public ResponseEntity<PublicSlotDto> sendBookingRequest(
       @PathVariable Long slotId,
       @RequestBody BookingRequestDto bookingRequestDto,
       Authentication authentication
@@ -267,7 +271,8 @@ public class MasterController {
 
     slot = slotService.save(slot);
 
-    return new PublicSlotDto(slot);
+    return ResponseEntity.status(HttpStatus.ACCEPTED)
+        .body(new PublicSlotDto(slot));
   }
 
   /**

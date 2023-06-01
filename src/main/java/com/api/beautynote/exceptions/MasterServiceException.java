@@ -17,6 +17,8 @@ public class MasterServiceException extends RuntimeException {
   @AllArgsConstructor
   public enum MasterServiceExceptionProfile {
 
+    SERVICE_ALREADY_DEFINED("service_already_defined",
+        "User already defined master service with such basic service id.", HttpStatus.CONFLICT),
     MASTER_SERVICE_NOT_FOUND("master_service_not_found",
         "Master service by given id not found.", HttpStatus.NOT_FOUND);
 

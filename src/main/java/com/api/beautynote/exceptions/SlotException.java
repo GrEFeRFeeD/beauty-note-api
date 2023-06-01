@@ -21,7 +21,7 @@ public class SlotException extends RuntimeException {
         "Slot is in past an can not be booked anymore.", HttpStatus.BAD_REQUEST),
 
     SLOT_IS_OCCUPIED("slot_is_occupied",
-        "Slot is already booked or in pending.", HttpStatus.BAD_REQUEST),
+        "Slot is not available.", HttpStatus.BAD_REQUEST),
 
     SLOT_NOT_FOUND("slot_not_found",
         "Slot by given id not found.", HttpStatus.NOT_FOUND);
