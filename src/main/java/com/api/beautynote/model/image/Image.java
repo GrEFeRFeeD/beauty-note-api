@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ public class Image {
   @Column(name = "image_id")
   private Long id;
 
-  @Column(columnDefinition = "BLOB")
+  @Lob
   private byte[] content;
 
   @Override
