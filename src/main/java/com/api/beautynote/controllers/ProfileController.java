@@ -3,12 +3,14 @@ package com.api.beautynote.controllers;
 import com.api.beautynote.controllers.dto.requests.EditSlotRequestBody;
 import com.api.beautynote.controllers.dto.requests.MasterServiceRequestDto;
 import com.api.beautynote.controllers.dto.requests.RegistrationRequestDto;
+import com.api.beautynote.controllers.dto.requests.RegistrationTokenRequestDto;
 import com.api.beautynote.controllers.dto.requests.SlotRequestDto;
 import com.api.beautynote.controllers.dto.responses.ClientProfileDto;
 import com.api.beautynote.controllers.dto.responses.MasterProfileDto;
 import com.api.beautynote.controllers.dto.responses.MasterServiceArrayDto;
 import com.api.beautynote.controllers.dto.responses.MasterServiceDto;
 import com.api.beautynote.controllers.dto.responses.PublicSlotsMapDto;
+import com.api.beautynote.controllers.dto.responses.RegistrationTokenDto;
 import com.api.beautynote.controllers.dto.responses.SlotDto;
 import com.api.beautynote.controllers.dto.responses.SlotsMapDto;
 import com.api.beautynote.exceptions.MasterServiceException;
@@ -30,6 +32,8 @@ import com.api.beautynote.model.user.Role;
 import com.api.beautynote.model.user.User;
 import com.api.beautynote.model.user.UserService;
 import com.api.beautynote.security.JwtUserDetails;
+import com.api.beautynote.services.NotificationService;
+import com.api.beautynote.services.dto.PushNotificationType;
 import java.sql.Date;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -47,6 +51,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,16 +64,18 @@ public class ProfileController {
   private final SlotService slotService;
   private final MasterServiceService masterServiceService;
   private final ServiceService serviceService;
+  private final NotificationService notificationService;
 
   @Autowired
   public ProfileController(UserService userService, MasterService masterService,
       SlotService slotService, MasterServiceService masterServiceService,
-      ServiceService serviceService) {
+      ServiceService serviceService, NotificationService notificationService) {
     this.userService = userService;
     this.masterService = masterService;
     this.slotService = slotService;
     this.masterServiceService = masterServiceService;
     this.serviceService = serviceService;
+    this.notificationService = notificationService;
   }
 
   @GetMapping("/me")
@@ -188,11 +195,14 @@ public class ProfileController {
       throw new SlotException(SlotExceptionProfile.SLOT_NOT_FOUND);
     }
 
+    User clientToBeNotified = null;
     if (slot.getStatus() == SlotStatus.PENDING || slot.getStatus() == SlotStatus.BOOKED) {
-      // TODO: send push to client
+      clientToBeNotified = slot.getUser();
     }
 
     slot.setStatus(editSlotRequestBody.getStatus());
+
+
 
     if (slot.getStatus() != SlotStatus.PENDING && slot.getStatus() != SlotStatus.BOOKED) {
       slot.setUser(null);
@@ -202,6 +212,10 @@ public class ProfileController {
     slot.setTo(Date.from(editSlotRequestBody.getTo().toInstant()));
 
     slot = slotService.save(slot);
+
+    if (Objects.nonNull(clientToBeNotified)) {
+      notificationService.sendPushNotification(clientToBeNotified, PushNotificationType.SLOT_STATUS_CHANGE, slot);
+    }
 
     return ResponseEntity.status(HttpStatus.ACCEPTED)
         .body(new SlotDto(slot));
@@ -250,6 +264,35 @@ public class ProfileController {
     newMasterService = masterServiceService.save(newMasterService);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new MasterServiceDto(newMasterService));
+  }
+
+  @PreAuthorize("hasAnyRole(['CLIENT', 'MASTER'])")
+  @GetMapping("/me/registration-token")
+  public RegistrationTokenDto getRegistrationToken(
+      Authentication authentication
+  ) {
+
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+    User user = userService.findByEmail(jwtUserDetails.getEmail());
+
+    return new RegistrationTokenDto(user.getId(), user.getRole(), user.getRegistrationToken());
+  }
+
+  @PreAuthorize("hasAnyRole(['CLIENT', 'MASTER'])")
+  @PutMapping("/me/registration-token")
+  public ResponseEntity<RegistrationTokenDto> updateRegistrationToken(
+      @RequestBody RegistrationTokenRequestDto registrationTokenRequestDto,
+      Authentication authentication
+  ) {
+
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+    User user = userService.findByEmail(jwtUserDetails.getEmail());
+
+    user.setRegistrationToken(registrationTokenRequestDto.getRegistrationToken());
+    user = userService.save(user);
+
+    return ResponseEntity.status(HttpStatus.ACCEPTED)
+        .body(new RegistrationTokenDto(user.getId(), user.getRole(), user.getRegistrationToken()));
   }
 
   /**

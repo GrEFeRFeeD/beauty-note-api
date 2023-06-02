@@ -28,6 +28,8 @@ import com.api.beautynote.model.slot.SlotStatus;
 import com.api.beautynote.model.user.User;
 import com.api.beautynote.model.user.UserService;
 import com.api.beautynote.security.JwtUserDetails;
+import com.api.beautynote.services.NotificationService;
+import com.api.beautynote.services.dto.PushNotificationType;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -61,18 +63,21 @@ public class MasterController {
   private final ServiceService serviceService;
   private final MasterServiceService masterServiceService;
   private final SlotService slotService;
-  private UserService userService;
+  private final UserService userService;
+  private final NotificationService notificationService;
 
   @Autowired
   public MasterController(MasterService masterService, MasterTypeService masterTypeService,
       ServiceService serviceService, MasterServiceService masterServiceService,
-      SlotService slotService, UserService userService) {
+      SlotService slotService, UserService userService,
+      NotificationService notificationService) {
     this.masterService = masterService;
     this.masterTypeService = masterTypeService;
     this.serviceService = serviceService;
     this.masterServiceService = masterServiceService;
     this.slotService = slotService;
     this.userService = userService;
+    this.notificationService = notificationService;
   }
 
   @GetMapping("/masters")
@@ -267,9 +272,9 @@ public class MasterController {
     slot.setMasterService(masterService);
     slot.setStatus(SlotStatus.PENDING);
 
-    //TODO: PUSH event
-
     slot = slotService.save(slot);
+
+    notificationService.sendPushNotification(slot.getMaster().getUser(), PushNotificationType.NEW_BOOKING_REQUEST, slot);
 
     return ResponseEntity.status(HttpStatus.ACCEPTED)
         .body(new PublicSlotDto(slot));

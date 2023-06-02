@@ -53,6 +53,22 @@ public class User {
   private String region;
   private String city;
   private Role role;
+  private String registrationToken = null;
+
+  public User(Long id, Master master, String email, String name, String surname, String phoneNumber,
+      Image image, String country, String region, String city, Role role) {
+    this.id = id;
+    this.master = master;
+    this.email = email;
+    this.name = name;
+    this.surname = surname;
+    this.phoneNumber = phoneNumber;
+    this.image = image;
+    this.country = country;
+    this.region = region;
+    this.city = city;
+    this.role = role;
+  }
 
   @Override
   public String toString() {
