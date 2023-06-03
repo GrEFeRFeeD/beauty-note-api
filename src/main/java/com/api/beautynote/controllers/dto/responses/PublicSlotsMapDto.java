@@ -18,15 +18,21 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PublicSlotsMapDto {
 
-  private Map<LocalDate, List<PublicSlotDto>> slots;
+  private List<PublicSlotDto> slots;
 
   public PublicSlotsMapDto(List<Slot> slots) {
-    this.slots = slots.isEmpty() ? new HashMap<>() :
-        slots.stream()
-        .map(PublicSlotDto::new)
-        .collect(Collectors.groupingBy(slot -> slot.getFrom()
-            .toInstant()
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()));
+    this.slots = slots.stream().map(PublicSlotDto::new).collect(Collectors.toList());
   }
+
+//  private Map<LocalDate, List<PublicSlotDto>> slots;
+//
+//  public PublicSlotsMapDto(List<Slot> slots) {
+//    this.slots = slots.isEmpty() ? new HashMap<>() :
+//        slots.stream()
+//        .map(PublicSlotDto::new)
+//        .collect(Collectors.groupingBy(slot -> slot.getFrom()
+//            .toInstant()
+//            .atZone(ZoneId.systemDefault())
+//            .toLocalDate()));
+//  }
 }
