@@ -143,7 +143,7 @@ public class ProfileController {
         .collect(Collectors.toList());
 
     if (user.getRole() != Role.MASTER) {
-      userSlots.stream().peek(slot -> slot.setUser(null)).collect(Collectors.toList());
+      userSlots = userSlots.stream().peek(slot -> slot.setUser(null)).collect(Collectors.toList());
     }
 
     return ResponseEntity.ok(new SlotsMapDto(userSlots));
