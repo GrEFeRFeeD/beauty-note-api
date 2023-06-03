@@ -20,7 +20,7 @@ public class SlotsMapDto {
 
   private List<SlotDto> slots;
 
-  private SlotsMapDto(List<Slot> slots) {
+  public SlotsMapDto(List<Slot> slots) {
     this.slots = slots.stream().map(SlotDto::new).collect(Collectors.toList());
   }
 
