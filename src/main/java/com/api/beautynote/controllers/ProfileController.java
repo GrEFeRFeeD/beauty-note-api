@@ -122,7 +122,7 @@ public class ProfileController {
   }
 
   @GetMapping("/me/slots")
-  public ResponseEntity<?> getAllRelatedSlots(
+  public ResponseEntity<SlotsMapDto> getAllRelatedSlots(
       @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) ZonedDateTime startDateTime,
       @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) ZonedDateTime endDateTime,
       @RequestParam(required = false) String status,
@@ -142,11 +142,11 @@ public class ProfileController {
         .filter(x -> (Objects.isNull(status) || x.getStatus() == SlotStatus.valueOf(status)))
         .collect(Collectors.toList());
 
-    if (user.getRole() == Role.MASTER) {
-      return ResponseEntity.ok(new SlotsMapDto(userSlots));
+    if (user.getRole() != Role.MASTER) {
+      userSlots.stream().peek(slot -> slot.setUser(null)).collect(Collectors.toList());
     }
 
-    return ResponseEntity.ok(new PublicSlotsMapDto(userSlots));
+    return ResponseEntity.ok(new SlotsMapDto(userSlots));
   }
 
   @PreAuthorize("hasRole('MASTER')")
