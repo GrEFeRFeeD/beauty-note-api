@@ -196,8 +196,8 @@ public class ProfileController {
       slot.setUser(null);
     }
 
-    slot.setFrom(Date.from(editSlotRequestBody.getFrom().toInstant()));
-    slot.setTo(Date.from(editSlotRequestBody.getTo().toInstant()));
+//    slot.setFrom(Date.from(editSlotRequestBody.getFrom().toInstant()));
+//    slot.setTo(Date.from(editSlotRequestBody.getTo().toInstant()));
 
     slot = slotService.save(slot);
 
