@@ -17,9 +17,9 @@ public class EditSlotRequestBody {
 
   private SlotStatus status;
 
-  @DateTimeFormat(iso = ISO.DATE_TIME)
-  private ZonedDateTime from;
-
-  @DateTimeFormat(iso = ISO.DATE_TIME)
-  private ZonedDateTime to;
+//  @DateTimeFormat(iso = ISO.DATE_TIME)
+//  private ZonedDateTime from;
+//
+//  @DateTimeFormat(iso = ISO.DATE_TIME)
+//  private ZonedDateTime to;
 }
