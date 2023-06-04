@@ -74,19 +74,19 @@ public class ProfileController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<?> getSelfProfile(Authentication authentication) {
+  public ResponseEntity<MasterProfileDto> getSelfProfile(Authentication authentication) {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     User user = userService.findByEmail(jwtUserDetails.getEmail());
 
+    MasterProfileDto profileDto = new MasterProfileDto(user);
+
     if (user.getRole() == Role.MASTER) {
-      MasterProfileDto masterProfileDto = new MasterProfileDto(user.getMaster());
-      masterProfileDto.setPhoneNumber(user.getPhoneNumber());
-      masterProfileDto.setEmail(user.getEmail());
-      return ResponseEntity.ok(masterProfileDto);
+      profileDto.setPhoneNumber(user.getPhoneNumber());
+      profileDto.setEmail(user.getEmail());
     }
 
-    return ResponseEntity.ok(new ClientProfileDto(user));
+    return ResponseEntity.ok(new MasterProfileDto(user));
   }
 
   @PreAuthorize("hasRole('IN_DECIDE')")
