@@ -142,10 +142,6 @@ public class ProfileController {
         .filter(x -> (Objects.isNull(status) || x.getStatus() == SlotStatus.valueOf(status)))
         .collect(Collectors.toList());
 
-    if (user.getRole() != Role.MASTER) {
-      userSlots = userSlots.stream().peek(slot -> slot.setUser(null)).collect(Collectors.toList());
-    }
-
     return ResponseEntity.ok(new SlotsMapDto(userSlots));
   }
 
