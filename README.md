@@ -7,3 +7,4 @@ All documentation is provided with next link: [BN API docs](https://docs.google.
 Deployed at: https://beauty-note-api.onrender.com
 
 UPD 04.06.2023: render.com is on high demand, service currently not reacheble. Main branch could be used for running as local server.
+UPD 05.06.2023: deploy at render.com is now available.
